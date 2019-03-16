@@ -5,10 +5,7 @@ export default class passThrough {
     }
     /**
      * checks passthrough validity
-     * 
      * commas, quantifier, separation, start/end of string
-     * 
-     * 
      */
     validate = () => {
         let str = this.passthrough
@@ -42,10 +39,7 @@ export default class passThrough {
      *  replaces passthroughs with wildcaRD
      * To Do
      * Add support for more specific delimiters  ,,,30-100,,,
-     * 
-     * 
      */
-
     toRegex = (str) => {
         if (!str) { str = this.escape() }  //This is stupid
         let Re = /(?:,,,(-)?(\d{0,5}),,,)/g
@@ -57,9 +51,6 @@ export default class passThrough {
                 return ")(.{" + m2 + "," + m2 + "})("
             }
         })
-        //                                                          cont,,,-10,,,ray,,,-10,,,asdasd,,,-10,,, 
-        //now lets wrap the regex with additional capture groups   
-        //We can capture everything else to get index of passthroughs (stupid)
         let wrapped = `(${res})`
         let regObj = {"regex":'',"passPositions":[]}
         //remove trailing () if necessary
@@ -72,7 +63,7 @@ export default class passThrough {
         console.log(myRegex)
         return  myRegex//Messing with this removed G to get capture groups
     }
-    /** Takes a regex max object
+    /** 
      * 
      * Returns an object containing all the start and end values for
      * passthroughs and highlighting in the text editor
@@ -83,14 +74,11 @@ export default class passThrough {
         let matchIndex = result.index
         //remove the first group, its the entire match, we're interested in captured groups
         let capturedStuff = result.slice(1)
-       // console.warn(capturedStuff)
-        //console.warn(matchIndex)
-        // we can assume that the passthroughs are the even captures
         let coordinates = {passThroughs:[],"verbose":[]}
         let movingAnchor = matchIndex
         capturedStuff.forEach( (capture, i) =>{
               //Lets get the index of all group 
-            if(i/2 % 1 !== 0){   //If the index is odd (since it starts at 0) !!!
+            if(i/2 % 1 !== 0){   //If the index is odd 
                 coordinates.passThroughs.push({
                     "start":movingAnchor,
                     "end": capture.length+movingAnchor
@@ -104,11 +92,6 @@ export default class passThrough {
             //Move Along!
             movingAnchor = capture.length + movingAnchor
         })
-
-        console.log(coordinates)
         return coordinates
-
     }
-    
-
 }

@@ -5,14 +5,12 @@ import React, { Component } from 'react'
 export default class MyToolTip extends Component {
   constructor(props) {
     super(props)
-
     this.state = {
       displayTooltip: false
     }
     this.hideTooltip = this.hideTooltip.bind(this)
     this.showTooltip = this.showTooltip.bind(this)
   }
-  
   hideTooltip () {
     this.setState({displayTooltip: false})
     

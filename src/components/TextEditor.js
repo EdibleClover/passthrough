@@ -30,7 +30,6 @@ const initialValue = Value.fromJSON({
 export default class TextEditor extends Component {
 	constructor() {
 		super()
-		this.onInputChange = this.onInputChange.bind(this);
 	}
 	state = {
 		value: initialValue,
@@ -47,7 +46,6 @@ export default class TextEditor extends Component {
 			},
 		},
 	}
-
 	/**
 	 * Store a reference to the `editor`.
 	 *
@@ -60,11 +58,8 @@ export default class TextEditor extends Component {
     /**
      * On EditorChange
      */
-
-
 	renderMark = (props, editor, next) => {
 		const { children, mark, attributes } = props
-
 		switch (mark.type) {
 			case 'highlight':
 				return (
@@ -78,7 +73,6 @@ export default class TextEditor extends Component {
 				return next()
 		}
 	}
-
 	validate = (myPass) => {
 		let validate = myPass.validate();
 	}
@@ -90,7 +84,7 @@ export default class TextEditor extends Component {
 	onInputChange = (event) => {
 		const { editor } = this
 		const { value } = editor  //Top level object of slate
-		const string = event.target.value   //The PASSTHROUGH
+		const string = event.target.value   
 		const texts = value.document.getTexts() ///Object of every node
 		const decorations = []
 		const myPass = new PassThrough(string)
@@ -104,12 +98,10 @@ export default class TextEditor extends Component {
 			let regexMatch = text.match(Regex);
 			//If theres a match render some marks
 			if (regexMatch != null) {
-				//console.log("RegexMatch::   " + regexMatch)
 				/**
 				 * check for an exact match. ie, no passthroughs, only the highlight mark 
 				 */
 				if (regexMatch.length === 2) {  //This is an exact match, there are no other matches in the array
-					console.log("EXACT MATCH!@")
 					let anchor = regexMatch.index;
 					let focus = anchor + regexMatch[0].length
 					decorations.push({
@@ -128,13 +120,11 @@ export default class TextEditor extends Component {
 					//Pass RegexMatch to generate coordinates for highlight
 					let Coordinates = myPass.GenerateCoordinates(regexMatch)
 					Coordinates.passThroughs.forEach((c)=>{
-
 						decorations.push({
 							anchor: { key, offset: c.start },
 							focus: { key, offset: c.end },
 							mark: { type: 'Passthrough' },
 						})
-
 					})
 					Coordinates.verbose.forEach((c)=>{
 						decorations.push({
