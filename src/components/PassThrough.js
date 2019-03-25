@@ -1,6 +1,5 @@
 export default class passThrough {
     constructor(passthrough) {
-
         this.passthrough = passthrough;
     }
     /**
@@ -32,6 +31,7 @@ export default class passThrough {
         let res = str.replace(Re, (x) => {
             return '\\' + x
         })
+        console.warn(res)
         return res
     }
     /**
@@ -39,9 +39,12 @@ export default class passThrough {
      *  replaces passthroughs with wildcaRD
      * To Do
      * Add support for more specific delimiters  ,,,30-100,,,
+     * 
+     * So this actually generates a syntax error \ at end of pattern if a trailing ( is at the end of the search
+     * Oddly enough this doesn't seem to cause a problem after running build
      */
     toRegex = (str) => {
-        if (!str) { str = this.escape() }  //This is stupid
+        if (!str) { str = this.escape() }  //This is stupid,
         let Re = /(?:,,,(-)?(\d{0,5}),,,)/g
         let res = str.replace(Re, (x, m1, m2) => {
             if (m1 === '-') {
@@ -50,7 +53,9 @@ export default class passThrough {
             else {
                 return ")(.{" + m2 + "," + m2 + "})("
             }
-        })
+        })                                                  
+        //now lets wrap the regex with additional capture groups   
+        //We can capture everything else to get index of passthroughs (since the regex match doesn't contain indexs for captures)
         let wrapped = `(${res})`
         let regObj = {"regex":'',"passPositions":[]}
         //remove trailing () if necessary
@@ -74,11 +79,12 @@ export default class passThrough {
         let matchIndex = result.index
         //remove the first group, its the entire match, we're interested in captured groups
         let capturedStuff = result.slice(1)
+        // we can assume that the passthroughs are the even captures
         let coordinates = {passThroughs:[],"verbose":[]}
         let movingAnchor = matchIndex
         capturedStuff.forEach( (capture, i) =>{
               //Lets get the index of all group 
-            if(i/2 % 1 !== 0){   //If the index is odd 
+            if(i/2 % 1 !== 0){   //If the index is odd (since it starts at 0)
                 coordinates.passThroughs.push({
                     "start":movingAnchor,
                     "end": capture.length+movingAnchor

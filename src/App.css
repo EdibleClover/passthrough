@@ -3,3 +3,13 @@
 .Editor{
   padding:5px
 }
+.SearchBar{
+  background-color:rgba(52, 58, 64, .2);
+  z-index:200;
+  position: sticky;
+  top: 0px;
+}
+input[type="text"], textarea {
+  background-color : rgba(209, 209, 209); 
+
+}

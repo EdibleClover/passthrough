@@ -143,10 +143,12 @@ export default class TextEditor extends Component {
 	render() {
 		return (
 			<div>
+				<div className='SearchBar'>
 				<SearchBar
 					onChange={(e) => { this.onInputChange(e) }}
 					style={{}}
 				/>
+				</div>
 				<Editor
 					style={{ padding: '15px' }}
 					placeholder="Enter some rich text..."

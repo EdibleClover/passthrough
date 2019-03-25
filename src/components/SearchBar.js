@@ -25,18 +25,19 @@ export default class SearchBar extends Component {
     render(props) {
         return (
             <div style={this.props.sytle}>
-                <Navbar color="light" light expand="md">
-                    <NavbarBrand href="/">,,,-,,,</NavbarBrand>
+                <Navbar color="dark" light expand="md" fixed='true'>
+                    <NavbarBrand href="/">Reset</NavbarBrand>
                     <InputGroup>
                         <InputGroupAddon addonType="prepend">
                             <InputGroupText>
                             </InputGroupText>
                         </InputGroupAddon>
                         <Input
-                            onChange={(e) => {
+                            onChange={(e) => 
+                                {
                                 this.props.onChange(e)
                                 this.validate(e)
-                            }
+                                }
                             }
                             placeholder="Check it out"
                             invalid={this.state.valid !== "valid"}
