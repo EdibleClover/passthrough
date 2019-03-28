@@ -1,3 +1,8 @@
+// ToDo:
+// Try to solve really large text blocking the app
+// Add more advanced passthrough functionality
+// Convert hex
+
 export default class passThrough {
     constructor(passthrough) {
         this.passthrough = passthrough;
