@@ -152,6 +152,8 @@ export default class TextEditor extends Component {
 				<Editor
 					style={{ padding: '15px' }}
 					placeholder="Enter some rich text..."
+					autoCorrect={false}
+					spellCheck={false}
 					ref={this.ref}
 					defaultValue={initialValue}
 					schema={this.schema}
