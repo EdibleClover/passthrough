@@ -9,7 +9,7 @@ import {
     FormFeedback
 } from 'reactstrap';
 import passThrough from './PassThrough.js';
-export default class SearchBar extends Component {
+export default class InspectBox extends Component {
     constructor(props) {
         super(props)
         this.state = {
@@ -25,7 +25,7 @@ export default class SearchBar extends Component {
         return (
             <div style={this.props.sytle}>
                 <Navbar color="dark" light expand="md" fixed='true'>
-                    <NavbarBrand href='#' onClick={(e)=>this.props.onClick(e)}>Inspect</NavbarBrand>
+                    <NavbarBrand href="/">Reset</NavbarBrand>
                     <InputGroup>
                         <InputGroupAddon addonType="prepend">
                             <InputGroupText>

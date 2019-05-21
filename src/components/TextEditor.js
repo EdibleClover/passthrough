@@ -34,7 +34,8 @@ export default class TextEditor extends Component {
 	state = {
 		value: initialValue,
 		valid: '',
-		error: ''
+		error: '',
+		inspect: false
 	}
 	schema = {
 		marks: {
@@ -76,6 +77,9 @@ export default class TextEditor extends Component {
 	validate = (myPass) => {
 		let validate = myPass.validate();
 	}
+	handleInspect = () => {
+		this.setState({"inspect" : !this.state.inspect})
+			}
 	/**
 	 * On input change, update the decorations.
 	 *
@@ -110,12 +114,6 @@ export default class TextEditor extends Component {
 						mark: { type: 'highlight' },
 					})
 				}
-				/**
-				 * if regexMatch is matching with passthroughs it will be an array
-				 * Here where things get complicated
-				 * How do we get the anchors and focusa and render different marks for each
-				 * 	Unforuntaetly, there is a  bug where the first match of the regex groups will come back since it is not referncing its original position in the match
-				 */
 				else {
 					//Pass RegexMatch to generate coordinates for highlight
 					let Coordinates = myPass.GenerateCoordinates(regexMatch)
@@ -146,6 +144,7 @@ export default class TextEditor extends Component {
 				<div className='SearchBar'>
 				<SearchBar
 					onChange={(e) => { this.onInputChange(e) }}
+					inspectChange={(e) => this.handleInspect()}
 					style={{}}
 				/>
 				</div>

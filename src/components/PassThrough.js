@@ -84,12 +84,11 @@ export default class passThrough {
         let matchIndex = result.index
         //remove the first group, its the entire match, we're interested in captured groups
         let capturedStuff = result.slice(1)
-        // we can assume that the passthroughs are the even captures
         let coordinates = {passThroughs:[],"verbose":[]}
         let movingAnchor = matchIndex
         capturedStuff.forEach( (capture, i) =>{
               //Lets get the index of all group 
-            if(i/2 % 1 !== 0){   //If the index is odd (since it starts at 0)
+            if(i/2 % 1 !== 0){   //If the index is odd (since it starts at 0), this is cheating, we're assuming the search does not start with a passthrough, which would be illegal
                 coordinates.passThroughs.push({
                     "start":movingAnchor,
                     "end": capture.length+movingAnchor
