@@ -29,18 +29,17 @@ export default class passThrough {
      */
     escape = () => {
         let str = this.passthrough
-        let re = /[\]\[\(\)\/\\\.\+\?\^\$\}\{]/g
-        let re2 = /[^,]{3}\*[^,]{3}/
+        let re1 = /,{3/
+        let re = /([\]\[\(\)\/\\\.\+\?\^\$\}\{])/g
+        let re2 = /(?:[^,]){3}(\*)(?:[^,]){3}/  //Just do a pos/neg lookahead/behind or \K or something
         //let re = /[\\.*+?^${}()|\]\[]/g
-        let res = str.replace(re, (x) => {
+        let result = str.replace(re, (x) => {
             return '\\' + x
         })
-        let res2 = res.replace(re2, (x) => {
+        let result2 = result.replace(re2, (x) => {
             return '\\' + x
         })
-
-        console.warn(res2)
-        return res2
+        return result2
     }
     /**
      * Return the passthrough statements transformed to Regex
