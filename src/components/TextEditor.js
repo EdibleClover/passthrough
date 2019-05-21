@@ -88,17 +88,16 @@ export default class TextEditor extends Component {
 	onInputChange = (event) => {
 		const { editor } = this
 		const { value } = editor  //Top level object of slate
-		const string = event.target.value   
+		const str = event.target.value   
 		const texts = value.document.getTexts() ///Object of every node
 		const decorations = []
-		const myPass = new PassThrough(string)
+		const myPass = new PassThrough(str)
 		this.validate(myPass)
 		//Begin Loops
 		const Regex = myPass.toRegex();
 		///Unfortunately, the search is not GLOBAL, 
 		texts.forEach(node => {
 			const { key, text } = node
-			//const parts = text.split(string)
 			let regexMatch = text.match(Regex);
 			//If theres a match render some marks
 			if (regexMatch != null) {

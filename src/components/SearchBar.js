@@ -38,7 +38,6 @@ export default class SearchBar extends Component {
                                 this.validate(e)
                                 }
                             }
-                            placeholder="Check it out"
                             invalid={this.state.valid !== "valid"}
                             valid={this.state.valid === "valid"}
                         />

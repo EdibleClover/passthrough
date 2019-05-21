@@ -1,8 +1,3 @@
-// ToDo:
-// Try to solve really large text blocking the app
-// Add more advanced passthrough functionality
-// Convert hex
-
 export default class passThrough {
     constructor(passthrough) {
         this.passthrough = passthrough;
@@ -17,9 +12,9 @@ export default class passThrough {
             return 'Too many commas found';
         } else if (str.match(',,,-,,,')) {
             return 'Missing quantifier';
-        } else if (str.match(/\d,,,[\w\d\D\s]{1},,,-?\d/)) {
+        } else if (str.match(/\d,{3}}.{1},{3}-?\d/)) {
             return 'Passthroughs must be separated by at least 2 bytes'
-        } else if (str.match(/^,,,-?\d+,,,|,,,-?\d+,,,$/)) {
+        } else if (str.match(/^,{3}-?\d+,{3}}|,{3}-?\d+,{3}$/)) {
             return "cannot start or end with a passthrough"
         }
         else {
@@ -29,49 +24,60 @@ export default class passThrough {
     /**
      * Escape regex Characters
      *  string
+     *  There is a problem where even though a ( is escaped at the end of the string,  throws an error when converting to regex
+     *                                                                                  SyntaxError: \ at end of pattern
      */
     escape = () => {
         let str = this.passthrough
-        let Re = /[\\.*+?^${}()|\]\[]/g
-        let res = str.replace(Re, (x) => {
+        let re = /[\]\[\(\)\/\\\.\+\?\^\$\}\{]/g
+        let re2 = /[^,]{3}\*[^,]{3}/
+        //let re = /[\\.*+?^${}()|\]\[]/g
+        let res = str.replace(re, (x) => {
             return '\\' + x
         })
-        console.warn(res)
-        return res
+        let res2 = res.replace(re2, (x) => {
+            return '\\' + x
+        })
+
+        console.warn(res2)
+        return res2
     }
     /**
      * Return the passthrough statements transformed to Regex
-     *  replaces passthroughs with wildcaRD
-     * To Do
-     * Add support for more specific delimiters  ,,,30-100,,,
      * 
-     * So this actually generates a syntax error \ at end of pattern if a trailing ( is at the end of the search
-     * Oddly enough this doesn't seem to cause a problem after running build
      */
     toRegex = (str) => {
-        if (!str) { str = this.escape() }  //This is stupid,
-        let Re = /(?:,,,(-)?(\d{0,5}),,,)/g
-        let res = str.replace(Re, (x, m1, m2) => {
-            if (m1 === '-') {
-                return ")(.{0," + m2 + "})("  //replaced 
+        if (!str) { str = this.escape() }
+        //Added all the functionality
+        const Re = /(?:,{3}(\*|(\d{0,5})(-)?(\d{0,5})),{3})/g  //Find ,,,*,,, | ,,,-?\d,,, | ,,,\d-\d
+        let res = str.replace(Re, (x, m1, m2, m3, m4) => {
+            console.log(`match ${x}`)
+            if (x.match(/^,{3}\d{0,5},{3}/)) {
+                return `)(.{${m1}})(`
             }
-            else {
-                return ")(.{" + m2 + "," + m2 + "})("
+            else if (x.startsWith(",,,-")) {
+                return `)(.{0,${m4}})(`  //replaced 
             }
-        })                                                  
+            else if (x.match(/^,{3}\d+-/)) {
+                return `)(.{${m2},${m4}})(`
+            }
+            else if (x.startsWith(",,,*")) {
+                return ")(.*?)("   //greedy or not? Need to check this
+            }
+        })
         //now lets wrap the regex with additional capture groups   
         //We can capture everything else to get index of passthroughs (since the regex match doesn't contain indexs for captures)
         let wrapped = `(${res})`
-        let regObj = {"regex":'',"passPositions":[]}
+        let regObj = { "regex": '', "passPositions": [] }
         //remove trailing () if necessary
-        let fixxed = 
-        ( wrapped.endsWith("()") ) ? 
-        wrapped.substr(0, wrapped.length-2) : wrapped
+        let fixxed =
+            (wrapped.endsWith("()")) ?
+                wrapped.substr(0, wrapped.length - 2) : wrapped
         //Create the regex
         const myRegex = new RegExp(fixxed, 'i')
         //Assign to my Ob
-        console.log(myRegex)
-        return  myRegex//Messing with this removed G to get capture groups
+        console.warn(myRegex)
+        return myRegex
     }
     /** 
      * 
@@ -79,24 +85,24 @@ export default class passThrough {
      * passthroughs and highlighting in the text editor
      * 
      */
-    GenerateCoordinates = (result) =>{
+    GenerateCoordinates = (result) => {
         //index of my match in the srting
         let matchIndex = result.index
         //remove the first group, its the entire match, we're interested in captured groups
         let capturedStuff = result.slice(1)
-        let coordinates = {passThroughs:[],"verbose":[]}
+        let coordinates = { passThroughs: [], "verbose": [] }
         let movingAnchor = matchIndex
-        capturedStuff.forEach( (capture, i) =>{
-              //Lets get the index of all group 
-            if(i/2 % 1 !== 0){   //If the index is odd (since it starts at 0), this is cheating, we're assuming the search does not start with a passthrough, which would be illegal
+        capturedStuff.forEach((capture, i) => {
+            //Lets get the index of all group 
+            if (i / 2 % 1 !== 0) {   //If the index is odd (since it starts at 0), this is cheating, we're assuming the search does not start with a passthrough, which would be illegal
                 coordinates.passThroughs.push({
-                    "start":movingAnchor,
-                    "end": capture.length+movingAnchor
+                    "start": movingAnchor,
+                    "end": capture.length + movingAnchor
                 })
-            }else {
+            } else {
                 coordinates.verbose.push({
-                    "start":movingAnchor,
-                    "end": capture.length+movingAnchor
+                    "start": movingAnchor,
+                    "end": capture.length + movingAnchor
                 })
             }
             //Move Along!
