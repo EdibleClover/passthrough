@@ -23,9 +23,9 @@ export default class PassThroughMark extends React.Component {
 	render(...props) {
 		return (
 			<span>
-				<span id={'tooltip-'+this.state.toolId} style={{ backgroundColor: '#ffb3b3' }}>
+				<span className="ptMark" id={'tooltip-'+this.state.toolId} style={{ backgroundColor: '#ffb3b3' }}>
 					{this.props.children}
-					<Tooltip trigger="hover" placement="right" isOpen={this.state.tooltipOpen} target={'tooltip-'+this.state.toolId} toggle={this.toggle}>
+					<Tooltip trigger="click" placement="right" isOpen={this.state.tooltipOpen} target={'tooltip-'+this.state.toolId} toggle={this.toggle}>
 						{this.props.text.length}
 					</Tooltip>
 				</span>
@@ -34,12 +34,3 @@ export default class PassThroughMark extends React.Component {
 	}
 }
 
-
-
-/*
-const PassThroughMark = props => (
-	<span  style={{ backgroundColor: '#ffb3b3' }}>
-		{props.children}
-	</span>
-);
-*/

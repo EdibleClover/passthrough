@@ -30,15 +30,12 @@ export default class passThrough {
     escape = () => {
         let str = this.passthrough
         let re1 = /,{3/
-        let re = /([\]\[\(\)\/\\\.\+\?\^\$\}\{])/g
-        let re2 = /(?:[^,]){3}(\*)(?:[^,]){3}/  //Just do a pos/neg lookahead/behind or \K or something
+        let re = /([\]\[\(\)\/\\\.\+\?\^\$\}\{\*])/g
         let result = str.replace(re, (x) => {
             return '\\' + x
         })
-        let result2 = result.replace(re2, (x) => {
-            return '\\' + x
-        })
-        return result2
+
+        return result
     }
     /**
      * Return the passthrough statements transformed to Regex
@@ -46,9 +43,9 @@ export default class passThrough {
     toRegex = (str) => {
         if (!str) { str = this.escape() }
         //Added all the functionality
-        const Re = /(?:,{3}(\*|(\d{0,5})(-)?(\d{0,5})),{3})/g  //Find ,,,*,,, | ,,,-?\d,,, | ,,,\d-\d
+        const Re = /(?:,{3}(\\\*|(\d{0,5})(-)?(\d{0,5})),{3})/g  //Find ,,,*,,, | ,,,-?\d,,, | ,,,\d-\d
         let res = str.replace(Re, (x, m1, m2, m3, m4) => {
-            console.log(`match ${x}`)
+            console.log(`str ${str}`)
             if (x.match(/^,{3}\d{0,5},{3}/)) {
                 return `)(.{${m1}})(`
             }
@@ -58,7 +55,7 @@ export default class passThrough {
             else if (x.match(/^,{3}\d+-/)) {
                 return `)(.{${m2},${m4}})(`
             }
-            else if (x.startsWith(",,,*")) {
+            else if (x.match(/,{3}\\\*,{3}/)) {
                 return ")(.*?)("   //greedy or not? Need to check this
             }
         })
