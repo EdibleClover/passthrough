@@ -32,7 +32,6 @@ export default class passThrough {
         let re1 = /,{3/
         let re = /([\]\[\(\)\/\\\.\+\?\^\$\}\{])/g
         let re2 = /(?:[^,]){3}(\*)(?:[^,]){3}/  //Just do a pos/neg lookahead/behind or \K or something
-        //let re = /[\\.*+?^${}()|\]\[]/g
         let result = str.replace(re, (x) => {
             return '\\' + x
         })
@@ -43,7 +42,6 @@ export default class passThrough {
     }
     /**
      * Return the passthrough statements transformed to Regex
-     * 
      */
     toRegex = (str) => {
         if (!str) { str = this.escape() }
@@ -55,7 +53,7 @@ export default class passThrough {
                 return `)(.{${m1}})(`
             }
             else if (x.startsWith(",,,-")) {
-                return `)(.{0,${m4}})(`  //replaced 
+                return `)(.{0,${m4}})(` 
             }
             else if (x.match(/^,{3}\d+-/)) {
                 return `)(.{${m2},${m4}})(`
@@ -79,10 +77,8 @@ export default class passThrough {
         return myRegex
     }
     /** 
-     * 
      * Returns an object containing all the start and end values for
      * passthroughs and highlighting in the text editor
-     * 
      */
     GenerateCoordinates = (result) => {
         //index of my match in the srting
