@@ -30,11 +30,10 @@ export default class passThrough {
     escape = () => {
         let str = this.passthrough
         let re1 = /,{3/
-        let re = /([\]\[\(\)\/\\\.\+\?\^\$\}\{\*])/g
+        let re = /([\]\[\(\)\/\\\.\+\?\^\$\}\{\*\|])/g
         let result = str.replace(re, (x) => {
             return '\\' + x
         })
-
         return result
     }
     /**
@@ -45,7 +44,6 @@ export default class passThrough {
         //Added all the functionality
         const Re = /(?:,{3}(\\\*|(\d{0,5})(-)?(\d{0,5})),{3})/g  //Find ,,,*,,, | ,,,-?\d,,, | ,,,\d-\d
         let res = str.replace(Re, (x, m1, m2, m3, m4) => {
-            console.log(`str ${str}`)
             if (x.match(/^,{3}\d{0,5},{3}/)) {
                 return `)(.{${m1}})(`
             }
@@ -69,11 +67,9 @@ export default class passThrough {
                 wrapped.substr(0, wrapped.length - 2) : wrapped
         //Create the regex
         const myRegex = new RegExp(fixxed, 'i')
-        //Assign to my Ob
-        console.warn(myRegex)
         return myRegex
     }
-    /** 
+    /**
      * Returns an object containing all the start and end values for
      * passthroughs and highlighting in the text editor
      */
@@ -91,6 +87,7 @@ export default class passThrough {
                     "start": movingAnchor,
                     "end": capture.length + movingAnchor
                 })
+
             } else {
                 coordinates.verbose.push({
                     "start": movingAnchor,

@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
 import { Editor } from 'slate-react'
 import { Value } from 'slate'
-import { HighLightMark, SearchBar, PassThrough, PassThroughMark } from './index.js'
-
+import { HighLightMark, PassThrough, PassThroughMark, Header } from './index.js'
+import { Container, Row, Col } from 'reactstrap'
 /**
  * Initial Text Editor Value
  */
@@ -27,15 +27,17 @@ const initialValue = Value.fromJSON({
 	},
 })
 
-export default class TextEditor extends Component {
+export default class PT101 extends Component {
 	constructor() {
 		super()
 	}
 	state = {
 		value: initialValue,
 		valid: '',
+		sig: 'contrary,,,-50,,,simply,,,-50,,,roots,,,-25,,,classical',
 		error: '',
-		inspect: false
+		dropDown: true,
+		decorations: {}
 	}
 	schema = {
 		marks: {
@@ -51,11 +53,10 @@ export default class TextEditor extends Component {
 	 * Store a reference to the `editor`.
 	 *
 	 * @param {Editor} editor
+	 * 
 	 */
 
-	ref = editor => {
-		this.editor = editor
-	}
+	ref = React.createRef()
     /**
      * On EditorChange
      */
@@ -74,25 +75,28 @@ export default class TextEditor extends Component {
 				return next()
 		}
 	}
-	validate = (myPass) => {
-		let validate = myPass.validate();
+	sigOnChange = (event, editor, next) => {
+		this.setState(
+			{ sig: event.target.value },
+			(event) => this.passMarks(event)
+		);
 	}
-	handleInspect = () => {
-		this.setState({"inspect" : !this.state.inspect})
-			}
+	editorOnChange = ({ value }) => {
+		this.setState({ value: value })
+	}
+
 	/**
 	 * On input change, update the decorations.
 	 *
 	 * @param {Event} event
 	 */
-	onInputChange = (event) => {
-		const { editor } = this
-		const { value } = editor  //Top level object of slate
-		const str = event.target.value   
+	passMarks = (event) => {
+		const sig = this.state.sig
+		const editor = this.ref.current
+		const value = editor.value  //Top level object of slate
 		const texts = value.document.getTexts() ///Object of every node
 		const decorations = []
-		const myPass = new PassThrough(str)
-		this.validate(myPass)
+		const myPass = new PassThrough(sig)
 		//Begin Loops
 		const Regex = myPass.toRegex();
 		///Unfortunately, the search is not GLOBAL, 
@@ -116,14 +120,14 @@ export default class TextEditor extends Component {
 				else {
 					//Pass RegexMatch to generate coordinates for highlight
 					let Coordinates = myPass.GenerateCoordinates(regexMatch)
-					Coordinates.passThroughs.forEach((c)=>{
+					Coordinates.passThroughs.forEach((c) => {
 						decorations.push({
 							anchor: { key, offset: c.start },
 							focus: { key, offset: c.end },
 							mark: { type: 'Passthrough' },
 						})
 					})
-					Coordinates.verbose.forEach((c)=>{
+					Coordinates.verbose.forEach((c) => {
 						decorations.push({
 							anchor: { key, offset: c.start },
 							focus: { key, offset: c.end },
@@ -132,30 +136,42 @@ export default class TextEditor extends Component {
 					})
 				}
 			}
+			this.setState(
+				{ decorations: decorations },
+				(event) => 
+			
 			editor.withoutSaving(() => {
 				editor.setDecorations(decorations)
 			})
+			);
 		})
 	}
 	render() {
 		return (
-			<div>
-				<div className='SearchBar'>
-				<SearchBar
-					onChange={(e) => { this.onInputChange(e) }}
-					inspectChange={(e) => this.handleInspect()}
-					style={{}}
+			<Container fluid={true} className="App">
+				<Header
+					onChange={(e) => { this.sigOnChange(e) }}
+					toggle={this.state.dropDown}
+					sig={this.state.sig}
+					decorations={this.state.decorations}
 				/>
-				</div>
-				<Editor
-					style={{ padding: '15px' }}
-					placeholder="Enter some rich text..."
-					ref={this.ref}
-					defaultValue={initialValue}
-					schema={this.schema}
-					renderMark={this.renderMark}
-				/>
-			</div>
+				<Row>
+					<Col>
+						<Editor
+							style={{ padding: '15px' }}
+							placeholder="Enter some rich text..."
+							ref={this.ref}
+							defaultValue={initialValue}
+							schema={this.schema}
+							renderMark={this.renderMark}
+							onChange={this.editorOnChange}
+							value={this.state.value}
+						/>
+					</Col>
+				</Row>
+			</Container>
 		)
 	}
 }
+
+

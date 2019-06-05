@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { TextEditor } from './components';
+import { PT101 } from './components';
 import './App.css';
 
 class App extends Component {
@@ -21,7 +21,7 @@ class App extends Component {
 
     return (
       <div className="App">
-        <TextEditor />
+        <PT101 />
       </div>
     );
   }
