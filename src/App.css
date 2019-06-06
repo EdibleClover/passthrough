@@ -1,15 +1,15 @@
+.App {
+ 
+}
+
+.Header {
+    padding: 10px;
+    background:#343a40;
+    position: -webkit-sticky; /* Safari */
+    position: sticky;
+    top: 0;
+    z-index:10000;
+}
 .Editor{
-  padding:5px
+    background:white;
 }
-.SearchBar{
-  background-color:rgba(52, 58, 64, .2);
-  z-index:200;
-  position: sticky;
-  top: 0px;
-}
-input[type="text"], textarea {
-  background-color : rgba(209, 209, 209); 
-
-}
-
-.ptMark { cursor: pointer; }

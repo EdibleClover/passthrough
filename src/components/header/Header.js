@@ -19,8 +19,8 @@ export default class Header extends Component {
         super(props)
         this.state = {
             valid: '',
-            toggle: false,
-            correctSig: ''
+            toggle: true,
+            correctSig: 'contrary,,,39,,,simply,,,21,,,roots,,,15,,,classical'
         }
     }
     validate = (e) => {
@@ -33,12 +33,43 @@ export default class Header extends Component {
             toggle: !prevState.toggle
         }));
     }
+    
     //Create a string with all the actual lenghts of the passthroughs that are created
     correctSiganture = () => {
         const sig = this.props.sig;
         const decor = this.props.decorations
-        fixSigWithDecorations(sig, decor)
-        this.setState({ correctSig: "Will be correct" })
+        const re = /,,,(?:-?\d+|\*),,,/
+        const correctSig = (sig.match(re)) ? this.fixSigWithDecorations(sig, decor) : "No Passthroughs found!";
+        this.setState(
+            { correctSig: correctSig },
+            (event) => console.log("done setting state")
+        );
+    }
+    fixSigWithDecorations = (sig, decorations) => {
+     //   console.log(decorations)
+        if (Array.isArray(decorations)) {
+            let sigDelims = [];
+            decorations.forEach((d, i) => {
+                if (d.mark.type === "Passthrough") {
+                    sigDelims.push(d.focus.offset - d.anchor.offset)
+                }
+            })
+            console.warn(sigDelims)
+            const literals = sig.split(/,,,(?:-?\d+|\*),,,/);
+            let correctSig = ""
+            literals.forEach((l, i)=>{
+                console.log(l + sigDelims[i])
+                let next = (sigDelims[i]) ? `${l},,,${sigDelims[i]},,,` : `${l}`
+                correctSig += next
+                
+            })
+            //console.log(literals)
+           console.log(correctSig)
+            return correctSig
+        }
+    }
+    componentDidMount(){
+        this.correctSiganture()
     }
     render(...props) {
         return (
@@ -47,7 +78,8 @@ export default class Header extends Component {
                     onChange={(e) => {
                         this.props.onChange(e)
                         this.validate(e)
-                        this.correctSiganture(e)
+                        this.correctSiganture()
+                        
                     }}
                     valid={this.state.valid}
                     buttonText="Expand"
@@ -62,7 +94,7 @@ export default class Header extends Component {
                         onClick={(e) => this.props.onClick(e)}
                         buttonText="options"
                         ButtonDropDown="true"
-                        onchange={"DoNothing"}
+                        onChange={"DoNothing"}
                     >
                         <DropButton></DropButton>
                     </MyInputGroup>
@@ -114,7 +146,8 @@ const DropButton = (props) => {
         </ButtonDropdown>)
 }
 //Build the signature again with correct passthrough numbers
-const fixSigWithDecorations = (sig, ...decorations) => {
+/*
+fixSigWithDecorations = (sig, ...decorations) => {
     console.log(decorations)
     if (typeof decorations[0] !== 'undefined' || decorations[0] !== null) {
         const decs = decorations[0]
@@ -122,8 +155,8 @@ const fixSigWithDecorations = (sig, ...decorations) => {
             decs.forEach((d, i) => {
                 if (typeof d[i] !== 'undefined') {
 
-                    console.log(d[i].anchor)
-                    console.log(d[i].focus)
+                    console.warn(d[i].anchor)
+                    console.warn(d[i].focus)
 
                 }
             })
@@ -136,3 +169,4 @@ const fixSigWithDecorations = (sig, ...decorations) => {
 
 
 }
+*/
