@@ -34,6 +34,7 @@ export default class passThrough {
         let result = str.replace(re, (x) => {
             return '\\' + x
         })
+        console.log("escaped!:\n"+result)
         return result
     }
     /**
@@ -57,16 +58,20 @@ export default class passThrough {
                 return ")(.*?)("   //greedy or not? Need to check this
             }
         })
+        console.log("res:\n"+res)
         //now lets wrap the regex with additional capture groups   
         //We can capture everything else to get index of passthroughs (since the regex match doesn't contain indexs for captures)
         let wrapped = `(${res})`
-        let regObj = { "regex": '', "passPositions": [] }
-        //remove trailing () if necessary
+        console.log(wrapped)
+        let regObj = { "regex": '', "passPositions": [] } //This doesn't seem to do anything
+        //remove trailing () if necessary //However this causes a problem, Disable it
         let fixxed =
             (wrapped.endsWith("()")) ?
                 wrapped.substr(0, wrapped.length - 2) : wrapped
+
         //Create the regex
-        const myRegex = new RegExp(fixxed, 'i')
+        console.log(wrapped)
+        const myRegex = new RegExp(wrapped, 'i')
         return myRegex
     }
     /**
