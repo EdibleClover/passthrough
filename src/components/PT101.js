@@ -33,11 +33,9 @@ export default class PT101 extends Component {
 	}
 	state = {
 		value: initialValue,
-		valid: '',
 		sig: 'contrary,,,-50,,,simply,,,-50,,,roots,,,-25,,,classical',
-		error: '',
-		dropDown: true,
-		decorations: {}
+		regex: {},
+		exactSig:''
 	}
 	schema = {
 		marks: {
@@ -76,74 +74,25 @@ export default class PT101 extends Component {
 		}
 	}
 	sigOnChange = (event, editor, next) => {
+		const sig = event.target.value.toLowerCase()
 		this.setState(
-			{ sig: event.target.value },
+			{ sig: sig },
 			(event) => this.passMarks(event)
 		);
 	}
-	editorOnChange = ({ value }) => {
+	editorOnChange = async ({ value }) => {
 		this.setState({ value: value })
 	}
-
-	/**
-	 * On input change, update the decorations.
-	 *
-	 * @param {Event} event
-	 */
-	passMarks = (event) => {
-		const sig = this.state.sig
+	passMarks = async (event) => {
 		const editor = this.ref.current
 		const value = editor.value  //Top level object of slate
-		const texts = value.document.getTexts() ///Object of every node
-		const decorations = []
-		const myPass = new PassThrough(sig)
-		//Begin Loops
-		const Regex = myPass.toRegex();
-		///Unfortunately, the search is not GLOBAL, 
-		texts.forEach(node => {
-			const { key, text } = node
-			let regexMatch = text.match(Regex);
-			//If theres a match render some marks
-			if (regexMatch != null) {
-				/**
-				 * check for an exact match. ie, no passthroughs, only the highlight mark 
-				 */
-				if (regexMatch.length === 2) {  //This is an exact match, there are no other matches in the array
-					let anchor = regexMatch.index;
-					let focus = anchor + regexMatch[0].length
-					decorations.push({
-						anchor: { key, offset: anchor },
-						focus: { key, offset: focus },
-						mark: { type: 'highlight' },
-					})
-				}
-				else {
-					//Pass RegexMatch to generate coordinates for highlight
-					let Coordinates = myPass.GenerateCoordinates(regexMatch)
-					Coordinates.passThroughs.forEach((c) => {
-						decorations.push({
-							anchor: { key, offset: c.start },
-							focus: { key, offset: c.end },
-							mark: { type: 'Passthrough' },
-						})
-					})
-					Coordinates.verbose.forEach((c) => {
-						decorations.push({
-							anchor: { key, offset: c.start },
-							focus: { key, offset: c.end },
-							mark: { type: 'highlight' },
-						})
-					})
-				}
-			}
-			this.setState(
-				{ decorations: decorations },
-				(event) => 
-			
-			editor.withoutSaving(() => {
-				editor.setDecorations(decorations)
-			})
-			);
+		const text = value.document.getTexts() ///Object of every node
+		const sig =  new PassThrough(this.state.sig, text)
+		const decorations = sig.decorations
+		const exact = (sig.decorations.length > 0) ? sig.generateExact() : "no match"
+		await this.setState({exactSig:exact})   //kinda nice that setState can be a promise
+		editor.withoutSaving(() => {
+			editor.setDecorations(decorations)
 		})
 	}
 	render() {
@@ -154,6 +103,7 @@ export default class PT101 extends Component {
 					toggle={this.state.dropDown}
 					sig={this.state.sig}
 					decorations={this.state.decorations}
+					exactSig = {this.state.exactSig}
 				/>
 				<Row>
 					<Col>
@@ -166,6 +116,8 @@ export default class PT101 extends Component {
 							renderMark={this.renderMark}
 							onChange={this.editorOnChange}
 							value={this.state.value}
+						  	spellCheck={false}
+						
 						/>
 					</Col>
 				</Row>

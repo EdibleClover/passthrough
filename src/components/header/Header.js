@@ -1,10 +1,6 @@
 import React, { Component } from 'react'
+import MyInputGroup from './MyInputGroup.js'
 import {
-    Row,
-    Col,
-    Input,
-    InputGroup,
-    FormFeedback,
     Collapse,
     Button,
     ButtonDropdown,
@@ -13,88 +9,51 @@ import {
     DropdownMenu
 
 } from 'reactstrap';
-import passThrough from '../PassThrough.js';
 export default class Header extends Component {
     constructor(props) {
         super(props)
         this.state = {
             valid: '',
             toggle: true,
-            correctSig: 'contrary,,,39,,,simply,,,21,,,roots,,,15,,,classical'
+            caretPos: 0
         }
-    }
-    validate = (e) => {
-        let p = new passThrough(e.target.value)
-        let q = p.validate();
-        this.setState({ valid: q })
     }
     toggleOnClick = (prevState) => {
         this.setState(prevState => ({
             toggle: !prevState.toggle
         }));
     }
-    
+    handleCaretPos = (e) => {
+        console.log(e.target)
+        let caretPos = e.target.selectionEnd
+        this.setState({caretPos:caretPos})
+    }
     //Create a string with all the actual lenghts of the passthroughs that are created
-    correctSiganture = () => {
-        const sig = this.props.sig;
-        const decor = this.props.decorations
-        const re = /,,,(?:-?\d+|\*),,,/
-        const correctSig = (sig.match(re)) ? this.fixSigWithDecorations(sig, decor) : "No Passthroughs found!";
-        this.setState(
-            { correctSig: correctSig },
-            (event) => console.log("done setting state")
-        );
-    }
-    fixSigWithDecorations = (sig, decorations) => {
-     //   console.log(decorations)
-        if (Array.isArray(decorations)) {
-            let sigDelims = [];
-            decorations.forEach((d, i) => {
-                if (d.mark.type === "Passthrough") {
-                    sigDelims.push(d.focus.offset - d.anchor.offset)
-                }
-            })
-            console.warn(sigDelims)
-            const literals = sig.split(/,,,(?:-?\d+|\*),,,/);
-            let correctSig = ""
-            literals.forEach((l, i)=>{
-                console.log(l + sigDelims[i])
-                let next = (sigDelims[i]) ? `${l},,,${sigDelims[i]},,,` : `${l}`
-                correctSig += next
-                
-            })
-            //console.log(literals)
-           console.log(correctSig)
-            return correctSig
-        }
-    }
-    componentDidMount(){
-        this.correctSiganture()
-    }
     render(...props) {
         return (
             <div className="Header" >
                 <MyInputGroup
                     onChange={(e) => {
                         this.props.onChange(e)
-                        this.validate(e)
-                        this.correctSiganture()
-                        
+                        this.handleCaretPos(e)
                     }}
                     valid={this.state.valid}
                     buttonText="Expand"
                     ButtonDropDown={false}
                     value={this.props.sig}
+                    focus={this.state.focus}
                 >
                     <Button id="toggle" color="info" onClick={(e) => this.toggleOnClick(e)}>info</Button>
                 </MyInputGroup>
                 <Collapse isOpen={!this.state.toggle} navbar>
                     <MyInputGroup
-                        value={this.state.correctSig}
+                        value={this.props.exactSig}
                         onClick={(e) => this.props.onClick(e)}
                         buttonText="options"
                         ButtonDropDown="true"
-                        onChange={"DoNothing"}
+                        onChange={""}
+                        focus={this.state.focus}
+                        selectionEnd={this.state.selectionEnd}
                     >
                         <DropButton></DropButton>
                     </MyInputGroup>
@@ -103,35 +62,6 @@ export default class Header extends Component {
         )
     }
 }
-
-
-const MyInputGroup = (props) => {
-    return (
-        <Row>
-            <InputGroup>
-                <Col sm="11" style={{ color: "#343a40" }} >
-                    <Input
-                        onChange={(e) => {
-                            props.onChange(e)
-                        }}
-                        invalid={props.valid !== "valid"}
-                        valid={props.valid === "valid"}
-                        value={props.value}
-                    />
-                    <FormFeedback valid>
-                    </FormFeedback>
-                    <FormFeedback invalid>
-                        {props.valid}
-                    </FormFeedback>
-                </Col>
-                <Col sm="1">
-                    {props.children}
-                </Col>
-            </InputGroup>
-        </Row>
-    )
-}
-
 
 const DropButton = (props) => {
     return (
@@ -145,28 +75,3 @@ const DropButton = (props) => {
             </DropdownMenu>
         </ButtonDropdown>)
 }
-//Build the signature again with correct passthrough numbers
-/*
-fixSigWithDecorations = (sig, ...decorations) => {
-    console.log(decorations)
-    if (typeof decorations[0] !== 'undefined' || decorations[0] !== null) {
-        const decs = decorations[0]
-        if (typeof decs === 'array') {
-            decs.forEach((d, i) => {
-                if (typeof d[i] !== 'undefined') {
-
-                    console.warn(d[i].anchor)
-                    console.warn(d[i].focus)
-
-                }
-            })
-        }
-    }
-
-
-
-    //Again assuming all passthroughs are going to be even numbers in the array
-
-
-}
-*/
