@@ -94,7 +94,6 @@ export default class passThrough {
                     })
                 }
             }
-
             return decorations
         })
         return decorations
@@ -112,7 +111,7 @@ export default class passThrough {
         let coordinates = { passThroughs: [], "verbose": [] }
         let movingAnchor = matchIndex
         capturedStuff.forEach((capture, i) => {
-            if (i / 2 % 1 !== 0) {
+            if (i % 2 !== 0) {
                lengths.push(capture.length)
                 coordinates.passThroughs.push({
                     "start": movingAnchor,

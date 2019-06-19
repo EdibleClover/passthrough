@@ -15,35 +15,46 @@ export default class Header extends Component {
         this.state = {
             valid: '',
             toggle: true,
-            caretPos: 0
+            scrollLeft: '10'
         }
-    }
+        /*
+        * Creat Refs
+        */
+       this.textInput1 = React.createRef();
+       this.textInput2 = React.createRef();
+
+        }
+    /**
+     * handle the button drop down
+     */
     toggleOnClick = (prevState) => {
         this.setState(prevState => ({
             toggle: !prevState.toggle
         }));
     }
-    handleCaretPos = (e) => {
-        console.log(e.target)
-        let caretPos = e.target.selectionEnd
-        this.setState({caretPos:caretPos})
+    /**
+     * Handle Scroll Behavior between inputs
+     * Use the ref, created from inputField
+     */
+    handleScroll = (e) => {
+        const scrollLeft1 = this.textInput1.current.textInput.current.scrollLeft
+        this.textInput2.current.textInput.current.scrollLeft = scrollLeft1
     }
-    //Create a string with all the actual lenghts of the passthroughs that are created
     render(...props) {
         return (
             <div className="Header" >
                 <MyInputGroup
                     onChange={(e) => {
                         this.props.onChange(e)
-                        this.handleCaretPos(e)
                     }}
+                    onScroll={(e) => this.handleScroll(e)}
                     valid={this.state.valid}
                     buttonText="Expand"
                     ButtonDropDown={false}
                     value={this.props.sig}
-                    focus={this.state.focus}
+                    ref={this.textInput1}
                 >
-                    <Button id="toggle" color="info" onClick={(e) => this.toggleOnClick(e)}>info</Button>
+                <Button id="toggle" color="info" onClick={(e) => this.toggleOnClick(e)}>info</Button>
                 </MyInputGroup>
                 <Collapse isOpen={!this.state.toggle} navbar>
                     <MyInputGroup
@@ -51,9 +62,7 @@ export default class Header extends Component {
                         onClick={(e) => this.props.onClick(e)}
                         buttonText="options"
                         ButtonDropDown="true"
-                        onChange={""}
-                        focus={this.state.focus}
-                        selectionEnd={this.state.selectionEnd}
+                        ref={this.textInput2}
                     >
                         <DropButton></DropButton>
                     </MyInputGroup>
@@ -62,6 +71,8 @@ export default class Header extends Component {
         )
     }
 }
+
+
 
 const DropButton = (props) => {
     return (
@@ -75,3 +86,5 @@ const DropButton = (props) => {
             </DropdownMenu>
         </ButtonDropdown>)
 }
+
+

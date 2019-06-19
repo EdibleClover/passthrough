@@ -12,6 +12,7 @@ export default class MyInputGroup extends Component {
         this.state = {
             valid: ''
         }
+        this.textInput = React.createRef();
     }
     validate = (e) => {
         let str = e.target.value
@@ -30,6 +31,8 @@ export default class MyInputGroup extends Component {
         }
         this.setState({ valid: x })
     }
+    componentWillMount() {
+      }
     render(...props) {
         return (
             <Row>
@@ -43,8 +46,10 @@ export default class MyInputGroup extends Component {
                             invalid={this.state.valid !== "valid"}
                             valid={this.state.valid === "valid"}
                             value={this.props.value}
-                            selectionEnd={this.props.selectionEnd}
-                        />
+                            onScroll={this.props.onScroll ? (e)=>this.props.onScroll(e) : ''}
+                            scrollLeft={this.props.scrollLeft}
+                            innerRef={this.textInput}
+                            />
                         
                         <FormFeedback valid>
                         </FormFeedback>

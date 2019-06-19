@@ -13,3 +13,8 @@
 .Editor{
     background:white;
 }
+.is-valid form-control {
+    word-wrap: break-word;
+    word-break: break-all;
+    height: 80px;
+}
