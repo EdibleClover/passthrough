@@ -5,6 +5,11 @@ export default class passThrough {
         this.regex = this.toRegex(sig);
         this.decorations = this.generateDecorations(text)
     }
+    /**
+     * Creates a passthrough sig with the exact coordinates of the match
+     * There is a problem here when using ranges ie 100-200, 
+     * also it will throw the incorrect range when the passthrough ending is edited for some reason at the last group.
+     */
     generateExact = () => {
         const lengths = []
         const sigParts = this.sig.split(/,,,.{1,6},,,/)
@@ -40,7 +45,7 @@ export default class passThrough {
                 return `)(.{${m2},${m4}})(`
             }
             else if (x.match(/,{3}\\\*,{3}/)) {
-                return ")(.*?)("   //greedy or not? Need to check this
+                return ")(.*?)("   // needs to be less greedy somehow?
             }
         })
         let wrapped = `(${res})`

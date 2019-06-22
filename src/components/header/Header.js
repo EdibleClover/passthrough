@@ -11,6 +11,19 @@ import {
 
     
 } from 'reactstrap';
+
+
+/**
+ * LARGE TODOs
+ * 
+ * Update the input fields to be slate editors so I can pass marks to them as well for highlighting just like regex101
+ * This will take more refs being passed up, not sure how good of a thing that is with slate
+ *   However, I can probably drop the references being used in lower components to get dom props since slate will make them accessable.
+ * 
+ * Also the drop down buttons should probably do something. 
+ * 
+ * 
+ */
 export default class Header extends Component {
     constructor(props) {
         super(props)
