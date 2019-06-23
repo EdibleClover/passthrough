@@ -7,12 +7,12 @@ export default class passThrough {
     }
     /**
      * Creates a passthrough sig with the exact coordinates of the match
-     * There is a problem here when using ranges ie 100-200, 
-     * also it will throw the incorrect range when the passthrough ending is edited for some reason at the last group.
+     * 
+     * 
      */
     generateExact = () => {
         const lengths = []
-        const sigParts = this.sig.split(/,,,.{1,6},,,/)
+        const sigParts = this.sig.split(/,,,(?:.{1,6}-)?.{1,6},,,/)
         this.decorations.forEach((d)=>{
             if (d.mark.type === "Passthrough"){   lengths.push(d.focus.offset - d.anchor.offset)  }
         })
@@ -20,7 +20,7 @@ export default class passThrough {
         console.log(sigParts)
         let exact = ``
         sigParts.forEach((p, i) => {
-            let next  = (!lengths[i]) ? `${p}` : `${p},,,-${lengths[i]},,,`
+            let next  = (!lengths[i]) ? `${p}` : `${p},,,${lengths[i]},,,`
             exact += next;     
         })
         return exact

@@ -22,7 +22,6 @@ import {
  * 
  * Also the drop down buttons should probably do something. 
  * 
- * 
  */
 export default class Header extends Component {
     constructor(props) {
