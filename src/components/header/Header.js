@@ -62,6 +62,7 @@ export default class Header extends Component {
                         this.props.onChange(e)
                     }}
                     onScroll={(e) => this.handleScroll(e)}
+                    onKeyDown={(e)=>this.handleScroll(e)}
                     valid={this.state.valid}
                     buttonText="Expand"
                     ButtonDropDown={false}

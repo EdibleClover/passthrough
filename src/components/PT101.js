@@ -98,6 +98,7 @@ export default class PT101 extends Component {
 	render() {
 		return (
 			<Container fluid={true} className="App">
+				<Col>
 				<Header
 					onChange={(e) => { this.sigOnChange(e) }}
 					toggle={this.state.dropDown}
@@ -105,6 +106,7 @@ export default class PT101 extends Component {
 					decorations={this.state.decorations}
 					exactSig = {this.state.exactSig}
 				/>
+				</Col>
 				<Row>
 					<Col>
 						<Editor
